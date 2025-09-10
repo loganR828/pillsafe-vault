@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 248 100% 99%;
+    --foreground: 213 31% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 213 31% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 31% 15%;
+
+    --primary: 214 96% 42%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 213 31% 15%;
+
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 214 96% 42%;
+
+    /* Medical theme colors */
+    --medical-blue: 214 96% 42%;
+    --medical-blue-light: 214 96% 52%;
+    --medical-blue-dark: 214 96% 32%;
+    --security-green: 142 71% 45%;
+    --security-green-light: 142 71% 55%;
+    --warning-amber: 43 96% 56%;
+    
+    /* Gradients */
+    --gradient-medical: linear-gradient(135deg, hsl(var(--medical-blue)), hsl(var(--medical-blue-light)));
+    --gradient-security: linear-gradient(135deg, hsl(var(--security-green)), hsl(var(--security-green-light)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(214 32% 96%));
+    
+    /* Shadows */
+    --shadow-medical: 0 4px 20px -2px hsl(var(--medical-blue) / 0.15);
+    --shadow-card: 0 2px 10px -1px hsl(213 31% 15% / 0.1);
+    --shadow-hover: 0 8px 30px -4px hsl(var(--medical-blue) / 0.25);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 213 31% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 213 31% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 213 31% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 214 96% 52%;
+    --primary-foreground: 213 31% 8%;
+
+    --secondary: 217 33% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 142 71% 45%;
+    --accent-foreground: 213 31% 8%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 18%;
+    --input: 217 33% 18%;
+    --ring: 214 96% 52%;
+
+    /* Dark theme medical colors */
+    --medical-blue: 214 96% 52%;
+    --medical-blue-light: 214 96% 62%;
+    --medical-blue-dark: 214 96% 42%;
+    --security-green: 142 71% 45%;
+    --security-green-light: 142 71% 55%;
+    
+    --gradient-medical: linear-gradient(135deg, hsl(var(--medical-blue)), hsl(var(--medical-blue-light)));
+    --gradient-security: linear-gradient(135deg, hsl(var(--security-green)), hsl(var(--security-green-light)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(217 33% 12%));
+    
+    --shadow-medical: 0 4px 20px -2px hsl(var(--medical-blue) / 0.25);
+    --shadow-card: 0 2px 10px -1px hsl(0 0% 0% / 0.3);
+    --shadow-hover: 0 8px 30px -4px hsl(var(--medical-blue) / 0.35);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
