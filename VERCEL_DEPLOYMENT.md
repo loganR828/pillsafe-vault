@@ -52,6 +52,8 @@ NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
 3. **Output Directory**: `dist`
 4. **Install Command**: `npm install --legacy-peer-deps`
 
+**Important**: The `--legacy-peer-deps` flag is required to resolve dependency conflicts between RainbowKit and Viem versions.
+
 ### Step 5: Domain Configuration (Optional)
 
 1. Go to "Domains" tab
@@ -91,7 +93,9 @@ NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
 ### Common Issues
 
 1. **Build Fails with Dependency Errors**
-   - Solution: Use `npm install --legacy-peer-deps` in install command
+   - **Error**: `ERESOLVE unable to resolve dependency tree` with RainbowKit and Viem
+   - **Solution**: Use `npm install --legacy-peer-deps` in install command
+   - **Alternative**: The project has been configured with compatible versions (wagmi v1, viem v1.19.9)
 
 2. **Wallet Connection Not Working**
    - Check if `NEXT_PUBLIC_PROJECT_ID` is correctly set
