@@ -73,7 +73,7 @@ export const WalletComponent = ({
               FHE Secure
             </Badge>
           </div>
-          <div className="text-2xl font-bold mb-1">{keys.length}</div>
+          <div className="text-2xl font-bold mb-1">{keys ? keys.length : 0}</div>
           <div className="text-sm opacity-90">Encryption Keys</div>
         </div>
 
@@ -91,7 +91,7 @@ export const WalletComponent = ({
         </div>
         
         <div className="space-y-3">
-          {keys.map((key, index) => (
+          {keys && keys.length > 0 ? keys.map((key, index) => (
             <div key={key.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-3">
                 <Key className={`w-4 h-4 ${
@@ -109,7 +109,11 @@ export const WalletComponent = ({
                 {key.status}
               </Badge>
             </div>
-          ))}
+          )) : (
+            <div className="text-center py-4 text-muted-foreground">
+              <p className="text-sm">No encryption keys available</p>
+            </div>
+          )}
         </div>
         
         <div className="flex gap-2 pt-2">

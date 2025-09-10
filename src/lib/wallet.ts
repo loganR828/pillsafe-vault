@@ -4,7 +4,7 @@ import { sepolia, mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 // Get projectId from https://cloud.walletconnect.com
-export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'your-project-id';
+export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'demo-project-id';
 
 // Create a metadata object - this will be used by RainbowKit
 export const metadata = {
@@ -26,6 +26,11 @@ const { connectors } = getDefaultWallets({
   projectId,
   chains,
 });
+
+// Add fallback for demo mode
+if (projectId === 'demo-project-id') {
+  console.warn('Using demo WalletConnect project ID. Please configure NEXT_PUBLIC_PROJECT_ID environment variable for production.');
+}
 
 // Create the config
 export const config = createConfig({
