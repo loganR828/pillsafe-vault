@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { PrescriptionCard } from "@/components/PrescriptionCard";
 import { WalletComponent } from "@/components/WalletComponent";
+import { WalletInfo } from "@/components/WalletInfo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, FileText, Shield } from "lucide-react";
@@ -255,12 +256,13 @@ const Index = () => {
           
           {/* Sidebar with wallet */}
           <div className="lg:col-span-1">
-            <div className="sticky top-8">
+            <div className="sticky top-8 space-y-6">
               <WalletComponent 
                 keys={walletKeys}
                 onGenerateKey={handleGenerateKey}
                 onRotateKeys={handleRotateKeys}
               />
+              <WalletInfo />
             </div>
           </div>
         </div>

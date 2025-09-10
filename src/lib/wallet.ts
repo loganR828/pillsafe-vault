@@ -1,53 +1,66 @@
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig } from 'wagmi';
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { sepolia, mainnet } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
 
 // Get projectId from https://cloud.walletconnect.com
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'demo-project-id';
 
-// Create a metadata object - this will be used by RainbowKit
-export const metadata = {
-  name: 'PillSafe Vault',
-  description: 'Privacy-preserving prescription management platform',
-  url: 'https://pillsafe-vault.vercel.app', // origin must match your domain & subdomain
-  icons: ['https://avatars.githubusercontent.com/u/37784886']
-};
-
-// Configure chains & providers
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [sepolia, mainnet],
-  [publicProvider()]
-);
-
-// Configure wallets
-const { connectors } = getDefaultWallets({
-  appName: metadata.name,
+// Create the config using RainbowKit's simplified configuration
+export const config = getDefaultConfig({
+  appName: 'PillSafe Vault',
   projectId,
-  chains,
+  chains: [sepolia, mainnet],
+  ssr: false, // Disable server-side rendering for better compatibility
 });
 
-// Disable recommended wallets to avoid API errors
-const connectorsWithDisabledRecommendations = connectors.map(connector => ({
-  ...connector,
-  options: {
-    ...connector.options,
-    recommended: false,
+// Alternative wallet configurations for diversity
+export const walletConfigs = {
+  rainbow: {
+    name: 'Rainbow',
+    icon: '🌈',
+    description: 'The fun, colorful way to interact with Web3'
   },
-}));
+  metaMask: {
+    name: 'MetaMask',
+    icon: '🦊',
+    description: 'The most popular Web3 wallet'
+  },
+  coinbase: {
+    name: 'Coinbase Wallet',
+    icon: '🔵',
+    description: 'Secure and easy-to-use wallet'
+  },
+  walletConnect: {
+    name: 'WalletConnect',
+    icon: '🔗',
+    description: 'Connect to 300+ wallets'
+  },
+  trust: {
+    name: 'Trust Wallet',
+    icon: '🛡️',
+    description: 'The most trusted & secure crypto wallet'
+  }
+};
+
+// Network configurations
+export const networks = {
+  sepolia: {
+    chainId: 11155111,
+    name: 'Sepolia Testnet',
+    rpcUrl: 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY',
+    blockExplorer: 'https://sepolia.etherscan.io'
+  },
+  mainnet: {
+    chainId: 1,
+    name: 'Ethereum Mainnet',
+    rpcUrl: 'https://mainnet.infura.io/v3/YOUR_INFURA_KEY',
+    blockExplorer: 'https://etherscan.io'
+  }
+} as const;
 
 // Add fallback for demo mode
 if (projectId === 'demo-project-id') {
   console.warn('Using demo WalletConnect project ID. Please configure NEXT_PUBLIC_PROJECT_ID environment variable for production.');
 }
-
-// Create the config
-export const config = createConfig({
-  autoConnect: true,
-  connectors: connectorsWithDisabledRecommendations,
-  publicClient,
-  webSocketPublicClient,
-});
 
 // Contract addresses (update these after deployment)
 export const CONTRACT_ADDRESSES = {
