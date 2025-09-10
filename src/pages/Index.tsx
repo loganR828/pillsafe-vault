@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, FileText, Shield } from "lucide-react";
 import { toast } from "sonner";
-import { useAccount, useWriteContract, useReadContract } from 'wagmi';
+import { useAccount, useContractWrite } from 'wagmi';
 import { CONTRACT_ADDRESSES, PILLSAFE_VAULT_ABI } from '@/lib/wallet';
 
 const samplePrescriptions = [
@@ -80,7 +80,6 @@ const samplePrescriptions = [
 
 const Index = () => {
   const { address, isConnected } = useAccount();
-  const { writeContract } = useWriteContract();
   const [prescriptions, setPrescriptions] = useState(samplePrescriptions);
   const [walletKeys, setWalletKeys] = useState([
     { id: "key1", name: "Primary Key", type: "AES-256-FHE", status: "Active" },

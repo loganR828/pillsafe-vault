@@ -1,0 +1,16 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "vite",
+  "functions": {
+    "app/api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "env": {
+    "NEXT_PUBLIC_PROJECT_ID": "@next_public_project_id",
+    "NEXT_PUBLIC_CONTRACT_ADDRESS_SEPOLIA": "@next_public_contract_address_sepolia",
+    "NEXT_PUBLIC_CONTRACT_ADDRESS_MAINNET": "@next_public_contract_address_mainnet"
+  }
+}

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Wallet, Key, Shield, Plus, RefreshCw, Info, Activity } from "lucide-react";
 import { toast } from "sonner";
-import { useAccount, useBalance, useReadContract } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 import { CONTRACT_ADDRESSES, PILLSAFE_VAULT_ABI } from '@/lib/wallet';
 
 interface WalletKey {
