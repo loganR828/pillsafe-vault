@@ -85,7 +85,7 @@ export const WalletStatus = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          {connectors.map((connector) => (
+          {connectors && Array.isArray(connectors) ? connectors.map((connector) => (
             <Button
               key={connector.id}
               variant="outline"
@@ -98,7 +98,7 @@ export const WalletStatus = () => {
               {!connector.ready && ' (unsupported)'}
               {isLoading && connector.id === pendingConnector?.id && ' (connecting)'}
             </Button>
-          ))}
+          )) : null}
           {error && (
             <div className="text-xs text-red-600 mt-2">
               {error.message}
