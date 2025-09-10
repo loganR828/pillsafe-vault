@@ -15,7 +15,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <WagmiConfig config={config}>
     <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider>
+      <RainbowKitProvider chains={config.chains}>
         <TooltipProvider>
           <Toaster />
           <Sonner />

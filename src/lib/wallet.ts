@@ -1,15 +1,30 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { configureChains, createConfig } from 'wagmi';
 import { sepolia, mainnet } from 'wagmi/chains';
+import { publicProvider } from 'wagmi/providers/public';
 
 // Get projectId from https://cloud.walletconnect.com
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'demo-project-id';
 
-// Create the config using RainbowKit's simplified configuration
-export const config = getDefaultConfig({
+// Configure chains & providers
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [sepolia, mainnet],
+  [publicProvider()]
+);
+
+// Configure wallets
+const { connectors } = getDefaultWallets({
   appName: 'PillSafe Vault',
   projectId,
-  chains: [sepolia, mainnet],
-  ssr: false, // Disable server-side rendering for better compatibility
+  chains,
+});
+
+// Create the config
+export const config = createConfig({
+  autoConnect: true,
+  connectors,
+  publicClient,
+  webSocketPublicClient,
 });
 
 // Alternative wallet configurations for diversity
