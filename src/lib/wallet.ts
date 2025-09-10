@@ -1,5 +1,7 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { configureChains, createConfig } from 'wagmi';
 import { sepolia, mainnet } from 'wagmi/chains';
+import { publicProvider } from 'wagmi/providers/public';
 
 // Get projectId from https://cloud.walletconnect.com
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'your-project-id';
@@ -12,12 +14,25 @@ export const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 };
 
-// Create the config
-export const config = getDefaultConfig({
+// Configure chains & providers
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [sepolia, mainnet],
+  [publicProvider()]
+);
+
+// Configure wallets
+const { connectors } = getDefaultWallets({
   appName: metadata.name,
   projectId,
-  chains: [sepolia, mainnet],
-  ssr: false, // If your dApp uses server side rendering (SSR)
+  chains,
+});
+
+// Create the config
+export const config = createConfig({
+  autoConnect: true,
+  connectors,
+  publicClient,
+  webSocketPublicClient,
 });
 
 // Contract addresses (update these after deployment)
