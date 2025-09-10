@@ -209,19 +209,19 @@ const Index = () => {
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
                     <div className="text-2xl font-bold text-security-green">
-                      {prescriptions.filter(p => p.status === "encrypted").length}
+                      {prescriptions ? prescriptions.filter(p => p.status === "encrypted").length : 0}
                     </div>
                     <div className="text-sm text-muted-foreground">Encrypted</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-medical-blue">
-                      {prescriptions.filter(p => p.status === "verified").length}
+                      {prescriptions ? prescriptions.filter(p => p.status === "verified").length : 0}
                     </div>
                     <div className="text-sm text-muted-foreground">Verified</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-warning-amber">
-                      {prescriptions.filter(p => p.status === "pending").length}
+                      {prescriptions ? prescriptions.filter(p => p.status === "pending").length : 0}
                     </div>
                     <div className="text-sm text-muted-foreground">Pending</div>
                   </div>
@@ -230,7 +230,7 @@ const Index = () => {
             </Card>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {prescriptions.map((prescription, index) => (
+              {prescriptions && prescriptions.length > 0 ? prescriptions.map((prescription, index) => (
                 <div
                   key={prescription.id}
                   className="animate-fade-in"
@@ -244,7 +244,12 @@ const Index = () => {
                     onDownload={handleDownloadPrescription}
                   />
                 </div>
-              ))}
+              )) : (
+                <div className="col-span-full text-center py-8 text-muted-foreground">
+                  <p className="text-lg">No prescriptions available</p>
+                  <p className="text-sm">Generate a new prescription to get started</p>
+                </div>
+              )}
             </div>
           </div>
           

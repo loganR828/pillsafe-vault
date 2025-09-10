@@ -27,6 +27,15 @@ const { connectors } = getDefaultWallets({
   chains,
 });
 
+// Disable recommended wallets to avoid API errors
+const connectorsWithDisabledRecommendations = connectors.map(connector => ({
+  ...connector,
+  options: {
+    ...connector.options,
+    recommended: false,
+  },
+}));
+
 // Add fallback for demo mode
 if (projectId === 'demo-project-id') {
   console.warn('Using demo WalletConnect project ID. Please configure NEXT_PUBLIC_PROJECT_ID environment variable for production.');
@@ -35,7 +44,7 @@ if (projectId === 'demo-project-id') {
 // Create the config
 export const config = createConfig({
   autoConnect: true,
-  connectors,
+  connectors: connectorsWithDisabledRecommendations,
   publicClient,
   webSocketPublicClient,
 });
