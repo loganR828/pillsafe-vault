@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { WagmiProvider } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { config } from './lib/wallet';
 import Index from "./pages/Index";
@@ -13,7 +13,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 const queryClient = new QueryClient();
 
 const App = () => (
-  <WagmiProvider config={config}>
+  <WagmiConfig config={config}>
     <QueryClientProvider client={queryClient}>
       <RainbowKitProvider chains={config.chains}>
         <TooltipProvider>
@@ -29,7 +29,7 @@ const App = () => (
         </TooltipProvider>
       </RainbowKitProvider>
     </QueryClientProvider>
-  </WagmiProvider>
+  </WagmiConfig>
 );
 
 export default App;
