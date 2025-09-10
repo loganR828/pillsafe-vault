@@ -122,22 +122,22 @@ const Index = () => {
       type: "AES-256-FHE",
       status: "Active"
     };
-    setWalletKeys(prev => [...prev, newKey]);
+    setWalletKeys(prev => Array.isArray(prev) ? [...prev, newKey] : [newKey]);
     toast.success("New encryption key generated!");
   };
 
   const handleRotateKeys = () => {
-    setWalletKeys(prev => prev.map(key => ({
+    setWalletKeys(prev => Array.isArray(prev) ? prev.map(key => ({
       ...key,
       status: key.status === "Active" ? "Rotating" : key.status
-    })));
+    })) : []);
     
     setTimeout(() => {
-      setWalletKeys(prev => prev.map(key => ({
+      setWalletKeys(prev => Array.isArray(prev) ? prev.map(key => ({
         ...key,
         status: key.status === "Rotating" ? "Active" : key.status,
         type: key.status === "Rotating" ? "AES-256-FHE-v2" : key.type
-      })));
+      })) : []);
       toast.success("Encryption keys rotated successfully!");
     }, 2000);
 
@@ -145,9 +145,9 @@ const Index = () => {
   };
 
   const handleVerifyPrescription = (id: string) => {
-    setPrescriptions(prev => prev.map(p => 
+    setPrescriptions(prev => Array.isArray(prev) ? prev.map(p => 
       p.id === id ? { ...p, status: "verified" as const } : p
-    ));
+    ) : []);
     toast.success("Prescription verified successfully!");
   };
 
