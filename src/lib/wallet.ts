@@ -19,10 +19,19 @@ const { connectors } = getDefaultWallets({
   chains,
 });
 
+// Disable recommended wallets to avoid API errors with demo project ID
+const connectorsWithDisabledRecommendations = connectors.map(connector => ({
+  ...connector,
+  options: {
+    ...connector.options,
+    recommended: false,
+  },
+}));
+
 // Create the config
 export const config = createConfig({
   autoConnect: true,
-  connectors,
+  connectors: connectorsWithDisabledRecommendations,
   publicClient,
   webSocketPublicClient,
 });
@@ -74,7 +83,12 @@ export const networks = {
 
 // Add fallback for demo mode
 if (projectId === 'demo-project-id') {
-  console.warn('Using demo WalletConnect project ID. Please configure NEXT_PUBLIC_PROJECT_ID environment variable for production.');
+  console.warn('⚠️ Using demo WalletConnect project ID. Please configure NEXT_PUBLIC_PROJECT_ID environment variable for production.');
+  console.warn('📝 To get a real project ID:');
+  console.warn('   1. Visit https://cloud.walletconnect.com');
+  console.warn('   2. Create a new project');
+  console.warn('   3. Copy the project ID');
+  console.warn('   4. Set NEXT_PUBLIC_PROJECT_ID in your environment variables');
 }
 
 // Contract addresses (update these after deployment)

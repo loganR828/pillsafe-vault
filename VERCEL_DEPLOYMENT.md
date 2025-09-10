@@ -38,6 +38,40 @@ NEXT_PUBLIC_CONTRACT_ADDRESS_MAINNET=0x0000000000000000000000000000000000000000
 
 **重要**: 如果不设置 `NEXT_PUBLIC_PROJECT_ID`，应用将使用演示模式，钱包连接功能可能受限。
 
+### 🔧 WalletConnect 配置说明
+
+#### 获取真实的 Project ID
+
+1. **访问 WalletConnect Cloud**：
+   - 打开 https://cloud.walletconnect.com
+   - 注册或登录账户
+
+2. **创建新项目**：
+   - 点击 "Create Project"
+   - 填写项目名称：`PillSafe Vault`
+   - 选择项目类型：`App`
+
+3. **获取 Project ID**：
+   - 复制生成的 Project ID
+   - 在 Vercel 环境变量中设置 `NEXT_PUBLIC_PROJECT_ID`
+
+#### 演示模式限制
+
+当使用 `demo-project-id` 时：
+- ❌ WalletConnect API 调用会失败（401 Unauthorized）
+- ❌ 推荐钱包功能不可用
+- ✅ 基本钱包连接功能仍然可用
+- ✅ 应用可以正常运行
+
+#### 错误处理
+
+应用已配置自动处理以下错误：
+- WebSocket 连接失败
+- API 认证错误
+- 推荐钱包加载失败
+
+这些错误不会影响应用的核心功能。
+
 # Optional: Analytics
 NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
 ```
