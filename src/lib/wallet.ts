@@ -1,114 +1,31 @@
-import { getDefaultWallets, connectorsForWallets } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig } from 'wagmi';
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { sepolia, mainnet } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
-import { 
-  metaMaskWallet,
-  rainbowWallet,
-  coinbaseWallet,
-  walletConnectWallet,
-  trustWallet,
-  injectedWallet
-} from '@rainbow-me/rainbowkit/wallets';
+import { http } from 'viem';
 
 // Get projectId from https://cloud.walletconnect.com
 export const projectId = import.meta.env.VITE_PROJECT_ID || 'e08e99d213c331aa0fd00f625de06e66';
 
-// Configure chains & providers
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [sepolia, mainnet],
-  [publicProvider()]
-);
-
 // Export chains for RainbowKit
-export { chains };
+export const chains = [sepolia, mainnet];
 
-// Try to get default wallets first
-let connectors;
-let fallbackConnectors = null;
-
-try {
-  const { connectors: defaultConnectors } = getDefaultWallets({
-    appName: 'PillSafe Vault',
-    projectId,
-    chains,
-  });
-  
-  // Check if we got valid connectors
-  if (defaultConnectors && Array.isArray(defaultConnectors) && defaultConnectors.length > 0) {
-    connectors = defaultConnectors;
-    console.log('✅ Using default wallets with projectId:', projectId, 'count:', defaultConnectors.length);
-  } else {
-    console.warn('⚠️ Default wallets returned empty array, using fallback');
-    connectors = null;
-  }
-} catch (error) {
-  console.warn('⚠️ Failed to get default wallets, using fallback:', error);
-  connectors = null;
-}
-
-// Create fallback if we don't have valid connectors
-if (!connectors || !Array.isArray(connectors) || connectors.length === 0) {
-  console.log('🔧 Creating fallback wallet configuration...');
-  
-  const fallbackWalletList = [
-    injectedWallet({ chains }),
-    metaMaskWallet({ chains, projectId }),
-    rainbowWallet({ chains }),
-    coinbaseWallet({ appName: 'PillSafe Vault', chains }),
-    trustWallet({ chains, projectId }),
-  ];
-
-  // Only add WalletConnect if we have a valid projectId
-  if (projectId && projectId !== 'demo-project-id') {
-    try {
-      fallbackWalletList.push(walletConnectWallet({ chains, projectId }));
-      console.log('✅ WalletConnect added to fallback with projectId:', projectId);
-    } catch (wcError) {
-      console.warn('⚠️ Failed to add WalletConnect to fallback:', wcError);
-    }
-  }
-
-  try {
-    fallbackConnectors = connectorsForWallets(fallbackWalletList);
-    console.log('✅ Fallback connectors created successfully');
-  } catch (fallbackError) {
-    console.error('❌ Failed to create fallback connectors:', fallbackError);
-    fallbackConnectors = null;
-  }
-}
-
-// Use default connectors if available, otherwise use fallback
-let finalConnectors = connectors && Array.isArray(connectors) && connectors.length > 0 ? connectors : fallbackConnectors;
-
-// Ensure we have valid connectors
-if (!finalConnectors || !Array.isArray(finalConnectors) || finalConnectors.length === 0) {
-  console.error('❌ No valid connectors available! Creating minimal fallback...');
-  
-  // Create a minimal fallback with just injected wallet
-  const minimalConnectors = connectorsForWallets([
-    injectedWallet({ chains })
-  ]);
-  
-  console.log('🔧 Using minimal fallback connectors');
-  finalConnectors = minimalConnectors;
-}
-
-// Debug: Log connector information
-console.log('🔗 Wallet connectors:', {
-  defaultConnectorsCount: connectors ? connectors.length : 0,
-  fallbackConnectorsCount: fallbackConnectors ? fallbackConnectors.length : 0,
-  finalConnectorsCount: finalConnectors ? finalConnectors.length : 0,
+// Create the config using getDefaultConfig (RainbowKit v2 approach)
+export const config = getDefaultConfig({
+  appName: 'PillSafe Vault',
   projectId,
-  chainsCount: chains.length
+  chains,
+  transports: {
+    [sepolia.id]: http('https://rpc.sepolia.org'),
+    [mainnet.id]: http('https://eth.llamarpc.com'),
+  },
+  ssr: false, // If your dApp uses server side rendering (SSR)
 });
 
-// Create the config
-export const config = createConfig({
-  autoConnect: true,
-  connectors: finalConnectors,
-  publicClient,
-  webSocketPublicClient,
+// Debug: Log configuration info
+console.log('🔗 Wallet configuration:', {
+  projectId,
+  chainsCount: chains.length,
+  chainNames: chains.map(c => c.name),
+  appName: 'PillSafe Vault'
 });
 
 // Alternative wallet configurations for diversity
