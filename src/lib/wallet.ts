@@ -33,13 +33,24 @@ try {
     projectId,
     chains,
   });
-  connectors = defaultConnectors;
-  console.log('✅ Using default wallets with projectId:', projectId);
+  
+  // Check if we got valid connectors
+  if (defaultConnectors && Array.isArray(defaultConnectors) && defaultConnectors.length > 0) {
+    connectors = defaultConnectors;
+    console.log('✅ Using default wallets with projectId:', projectId, 'count:', defaultConnectors.length);
+  } else {
+    console.warn('⚠️ Default wallets returned empty array, using fallback');
+    connectors = null;
+  }
 } catch (error) {
   console.warn('⚠️ Failed to get default wallets, using fallback:', error);
   connectors = null;
+}
+
+// Create fallback if we don't have valid connectors
+if (!connectors || !Array.isArray(connectors) || connectors.length === 0) {
+  console.log('🔧 Creating fallback wallet configuration...');
   
-  // Only create fallback if default wallets failed
   const fallbackWalletList = [
     injectedWallet({ chains }),
     metaMaskWallet({ chains, projectId }),
@@ -58,11 +69,30 @@ try {
     }
   }
 
-  fallbackConnectors = connectorsForWallets(fallbackWalletList);
+  try {
+    fallbackConnectors = connectorsForWallets(fallbackWalletList);
+    console.log('✅ Fallback connectors created successfully');
+  } catch (fallbackError) {
+    console.error('❌ Failed to create fallback connectors:', fallbackError);
+    fallbackConnectors = null;
+  }
 }
 
 // Use default connectors if available, otherwise use fallback
-const finalConnectors = connectors && Array.isArray(connectors) && connectors.length > 0 ? connectors : fallbackConnectors;
+let finalConnectors = connectors && Array.isArray(connectors) && connectors.length > 0 ? connectors : fallbackConnectors;
+
+// Ensure we have valid connectors
+if (!finalConnectors || !Array.isArray(finalConnectors) || finalConnectors.length === 0) {
+  console.error('❌ No valid connectors available! Creating minimal fallback...');
+  
+  // Create a minimal fallback with just injected wallet
+  const minimalConnectors = connectorsForWallets([
+    injectedWallet({ chains })
+  ]);
+  
+  console.log('🔧 Using minimal fallback connectors');
+  finalConnectors = minimalConnectors;
+}
 
 // Debug: Log connector information
 console.log('🔗 Wallet connectors:', {
