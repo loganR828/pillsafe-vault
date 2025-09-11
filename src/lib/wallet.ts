@@ -1,10 +1,18 @@
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, connectorsForWallets } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig } from 'wagmi';
 import { sepolia, mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { 
+  metaMaskWallet,
+  rainbowWallet,
+  coinbaseWallet,
+  walletConnectWallet,
+  trustWallet,
+  injectedWallet
+} from '@rainbow-me/rainbowkit/wallets';
 
 // Get projectId from https://cloud.walletconnect.com
-export const projectId = import.meta.env.VITE_PROJECT_ID || 'demo-project-id';
+export const projectId = import.meta.env.VITE_PROJECT_ID || 'e08e99d213c331aa0fd00f625de06e66';
 
 // Configure chains & providers
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -22,14 +30,39 @@ const { connectors } = getDefaultWallets({
   chains,
 });
 
-// Disable recommended wallets to avoid API errors with demo project ID
-const connectorsWithDisabledRecommendations = connectors && Array.isArray(connectors) ? connectors.map(connector => ({
+// Fallback wallet configuration if getDefaultWallets fails
+const fallbackConnectors = connectorsForWallets([
+  injectedWallet({ chains }),
+  metaMaskWallet({ chains }),
+  rainbowWallet({ chains }),
+  coinbaseWallet({ appName: 'PillSafe Vault', chains }),
+  walletConnectWallet({ chains, projectId }),
+  trustWallet({ chains }),
+]);
+
+// Use default connectors if available, otherwise use fallback
+const finalConnectors = connectors && Array.isArray(connectors) && connectors.length > 0 ? connectors : fallbackConnectors;
+
+// Ensure we have connectors and disable recommended wallets to avoid API errors
+const connectorsWithDisabledRecommendations = finalConnectors && Array.isArray(finalConnectors) && finalConnectors.length > 0 ? finalConnectors.map(connector => ({
   ...connector,
   options: {
     ...connector.options,
     recommended: false,
   },
 })) : [];
+
+// Debug: Log connector information
+console.log('Wallet connectors:', {
+  defaultConnectorsCount: connectors ? connectors.length : 0,
+  defaultConnectorsNames: connectors ? connectors.map(c => c.name) : [],
+  fallbackConnectorsCount: fallbackConnectors.length,
+  fallbackConnectorsNames: fallbackConnectors.map(c => c.name),
+  finalConnectorsCount: finalConnectors ? finalConnectors.length : 0,
+  finalConnectorsNames: finalConnectors ? finalConnectors.map(c => c.name) : [],
+  projectId,
+  chainsCount: chains.length
+});
 
 // Create the config
 export const config = createConfig({
