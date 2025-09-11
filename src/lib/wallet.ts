@@ -31,14 +31,22 @@ const { connectors } = getDefaultWallets({
 });
 
 // Fallback wallet configuration if getDefaultWallets fails
-const fallbackConnectors = connectorsForWallets([
+const fallbackWalletList = [
   injectedWallet({ chains }),
   metaMaskWallet({ chains }),
   rainbowWallet({ chains }),
   coinbaseWallet({ appName: 'PillSafe Vault', chains }),
-  walletConnectWallet({ chains, projectId }),
   trustWallet({ chains }),
-]);
+];
+
+// Only add WalletConnect if we have a valid projectId
+if (projectId && projectId !== 'demo-project-id') {
+  fallbackWalletList.push(walletConnectWallet({ chains, projectId }));
+} else {
+  console.warn('WalletConnectWallet is disabled because no valid projectId was provided.');
+}
+
+const fallbackConnectors = connectorsForWallets(fallbackWalletList);
 
 // Use default connectors if available, otherwise use fallback
 const finalConnectors = connectors && Array.isArray(connectors) && connectors.length > 0 ? connectors : fallbackConnectors;
