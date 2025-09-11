@@ -4,7 +4,7 @@ import { sepolia, mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 // Get projectId from https://cloud.walletconnect.com
-export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'demo-project-id';
+export const projectId = import.meta.env.VITE_PROJECT_ID || 'demo-project-id';
 
 // Configure chains & providers
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -93,8 +93,8 @@ if (projectId === 'demo-project-id') {
 
 // Contract addresses (update these after deployment)
 export const CONTRACT_ADDRESSES = {
-  sepolia: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_SEPOLIA || '0x0000000000000000000000000000000000000000',
-  mainnet: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MAINNET || '0x0000000000000000000000000000000000000000',
+  sepolia: import.meta.env.VITE_CONTRACT_ADDRESS_SEPOLIA || '0x0000000000000000000000000000000000000000',
+  mainnet: import.meta.env.VITE_CONTRACT_ADDRESS_MAINNET || '0x0000000000000000000000000000000000000000',
 };
 
 // ABI for the PillSafe Vault contract
