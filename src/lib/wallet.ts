@@ -23,8 +23,23 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 // Export chains for RainbowKit
 export { chains };
 
-// Configure wallets manually to avoid WalletConnect issues
-const walletList = [
+// Try to get default wallets first
+let connectors;
+try {
+  const { connectors: defaultConnectors } = getDefaultWallets({
+    appName: 'PillSafe Vault',
+    projectId,
+    chains,
+  });
+  connectors = defaultConnectors;
+  console.log('✅ Using default wallets with projectId:', projectId);
+} catch (error) {
+  console.warn('⚠️ Failed to get default wallets, using fallback:', error);
+  connectors = null;
+}
+
+// Fallback wallet configuration
+const fallbackWalletList = [
   injectedWallet({ chains }),
   metaMaskWallet({ chains, projectId }),
   rainbowWallet({ chains }),
@@ -34,21 +49,20 @@ const walletList = [
 
 // Only add WalletConnect if we have a valid projectId
 if (projectId && projectId !== 'demo-project-id') {
-  walletList.push(walletConnectWallet({ chains, projectId }));
-  console.log('✅ WalletConnect enabled with projectId:', projectId);
-} else {
-  console.warn('⚠️ WalletConnectWallet is disabled because no valid projectId was provided.');
-  console.warn('📝 Current projectId:', projectId);
+  fallbackWalletList.push(walletConnectWallet({ chains, projectId }));
+  console.log('✅ WalletConnect added to fallback with projectId:', projectId);
 }
 
-const finalConnectors = connectorsForWallets(walletList);
+const fallbackConnectors = connectorsForWallets(fallbackWalletList);
+
+// Use default connectors if available, otherwise use fallback
+const finalConnectors = connectors && Array.isArray(connectors) && connectors.length > 0 ? connectors : fallbackConnectors;
 
 // Debug: Log connector information
 console.log('🔗 Wallet connectors:', {
-  walletListCount: walletList.length,
-  walletListNames: walletList.map(w => w.name || w.id),
+  defaultConnectorsCount: connectors ? connectors.length : 0,
+  fallbackConnectorsCount: fallbackConnectors.length,
   finalConnectorsCount: finalConnectors ? finalConnectors.length : 0,
-  finalConnectorsNames: finalConnectors ? finalConnectors.map(c => c.name) : [],
   projectId,
   chainsCount: chains.length
 });
