@@ -23,49 +23,30 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 // Export chains for RainbowKit
 export { chains };
 
-// Configure wallets
-const { connectors } = getDefaultWallets({
-  appName: 'PillSafe Vault',
-  projectId,
-  chains,
-});
-
-// Fallback wallet configuration if getDefaultWallets fails
-const fallbackWalletList = [
+// Configure wallets manually to avoid WalletConnect issues
+const walletList = [
   injectedWallet({ chains }),
-  metaMaskWallet({ chains }),
+  metaMaskWallet({ chains, projectId }),
   rainbowWallet({ chains }),
   coinbaseWallet({ appName: 'PillSafe Vault', chains }),
-  trustWallet({ chains }),
+  trustWallet({ chains, projectId }),
 ];
 
 // Only add WalletConnect if we have a valid projectId
 if (projectId && projectId !== 'demo-project-id') {
-  fallbackWalletList.push(walletConnectWallet({ chains, projectId }));
+  walletList.push(walletConnectWallet({ chains, projectId }));
+  console.log('✅ WalletConnect enabled with projectId:', projectId);
 } else {
-  console.warn('WalletConnectWallet is disabled because no valid projectId was provided.');
+  console.warn('⚠️ WalletConnectWallet is disabled because no valid projectId was provided.');
+  console.warn('📝 Current projectId:', projectId);
 }
 
-const fallbackConnectors = connectorsForWallets(fallbackWalletList);
-
-// Use default connectors if available, otherwise use fallback
-const finalConnectors = connectors && Array.isArray(connectors) && connectors.length > 0 ? connectors : fallbackConnectors;
-
-// Ensure we have connectors and disable recommended wallets to avoid API errors
-const connectorsWithDisabledRecommendations = finalConnectors && Array.isArray(finalConnectors) && finalConnectors.length > 0 ? finalConnectors.map(connector => ({
-  ...connector,
-  options: {
-    ...connector.options,
-    recommended: false,
-  },
-})) : [];
+const finalConnectors = connectorsForWallets(walletList);
 
 // Debug: Log connector information
-console.log('Wallet connectors:', {
-  defaultConnectorsCount: connectors ? connectors.length : 0,
-  defaultConnectorsNames: connectors ? connectors.map(c => c.name) : [],
-  fallbackConnectorsCount: fallbackConnectors.length,
-  fallbackConnectorsNames: fallbackConnectors.map(c => c.name),
+console.log('🔗 Wallet connectors:', {
+  walletListCount: walletList.length,
+  walletListNames: walletList.map(w => w.name || w.id),
   finalConnectorsCount: finalConnectors ? finalConnectors.length : 0,
   finalConnectorsNames: finalConnectors ? finalConnectors.map(c => c.name) : [],
   projectId,
@@ -75,7 +56,7 @@ console.log('Wallet connectors:', {
 // Create the config
 export const config = createConfig({
   autoConnect: true,
-  connectors: connectorsWithDisabledRecommendations,
+  connectors: finalConnectors,
   publicClient,
   webSocketPublicClient,
 });
