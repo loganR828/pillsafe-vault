@@ -25,6 +25,8 @@ export { chains };
 
 // Try to get default wallets first
 let connectors;
+let fallbackConnectors = null;
+
 try {
   const { connectors: defaultConnectors } = getDefaultWallets({
     appName: 'PillSafe Vault',
@@ -36,24 +38,28 @@ try {
 } catch (error) {
   console.warn('⚠️ Failed to get default wallets, using fallback:', error);
   connectors = null;
+  
+  // Only create fallback if default wallets failed
+  const fallbackWalletList = [
+    injectedWallet({ chains }),
+    metaMaskWallet({ chains, projectId }),
+    rainbowWallet({ chains }),
+    coinbaseWallet({ appName: 'PillSafe Vault', chains }),
+    trustWallet({ chains, projectId }),
+  ];
+
+  // Only add WalletConnect if we have a valid projectId
+  if (projectId && projectId !== 'demo-project-id') {
+    try {
+      fallbackWalletList.push(walletConnectWallet({ chains, projectId }));
+      console.log('✅ WalletConnect added to fallback with projectId:', projectId);
+    } catch (wcError) {
+      console.warn('⚠️ Failed to add WalletConnect to fallback:', wcError);
+    }
+  }
+
+  fallbackConnectors = connectorsForWallets(fallbackWalletList);
 }
-
-// Fallback wallet configuration
-const fallbackWalletList = [
-  injectedWallet({ chains }),
-  metaMaskWallet({ chains, projectId }),
-  rainbowWallet({ chains }),
-  coinbaseWallet({ appName: 'PillSafe Vault', chains }),
-  trustWallet({ chains, projectId }),
-];
-
-// Only add WalletConnect if we have a valid projectId
-if (projectId && projectId !== 'demo-project-id') {
-  fallbackWalletList.push(walletConnectWallet({ chains, projectId }));
-  console.log('✅ WalletConnect added to fallback with projectId:', projectId);
-}
-
-const fallbackConnectors = connectorsForWallets(fallbackWalletList);
 
 // Use default connectors if available, otherwise use fallback
 const finalConnectors = connectors && Array.isArray(connectors) && connectors.length > 0 ? connectors : fallbackConnectors;
@@ -61,7 +67,7 @@ const finalConnectors = connectors && Array.isArray(connectors) && connectors.le
 // Debug: Log connector information
 console.log('🔗 Wallet connectors:', {
   defaultConnectorsCount: connectors ? connectors.length : 0,
-  fallbackConnectorsCount: fallbackConnectors.length,
+  fallbackConnectorsCount: fallbackConnectors ? fallbackConnectors.length : 0,
   finalConnectorsCount: finalConnectors ? finalConnectors.length : 0,
   projectId,
   chainsCount: chains.length
