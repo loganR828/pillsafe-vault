@@ -12,6 +12,9 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   [publicProvider()]
 );
 
+// Export chains for RainbowKit
+export { chains };
+
 // Configure wallets
 const { connectors } = getDefaultWallets({
   appName: 'PillSafe Vault',
@@ -20,13 +23,13 @@ const { connectors } = getDefaultWallets({
 });
 
 // Disable recommended wallets to avoid API errors with demo project ID
-const connectorsWithDisabledRecommendations = connectors.map(connector => ({
+const connectorsWithDisabledRecommendations = connectors && Array.isArray(connectors) ? connectors.map(connector => ({
   ...connector,
   options: {
     ...connector.options,
     recommended: false,
   },
-}));
+})) : [];
 
 // Create the config
 export const config = createConfig({

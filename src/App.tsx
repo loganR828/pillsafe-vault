@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WagmiConfig } from 'wagmi';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { config } from './lib/wallet';
+import { config, chains } from './lib/wallet';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import '@rainbow-me/rainbowkit/styles.css';
@@ -17,7 +17,7 @@ const App = () => (
   <ErrorBoundary>
     <WagmiConfig config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider chains={config.chains}>
+        <RainbowKitProvider chains={chains}>
           <TooltipProvider>
             <Toaster />
             <Sonner />
